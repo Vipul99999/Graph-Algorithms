@@ -1,1 +1,93 @@
+//Breadth First Search algorithm
+// CPP code of BFS algorithm
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
 
+vector<int> bfs(int n, vector<vector<int>>& adj, int start) {
+    vector<int> dist(n, -1);   // -1 means unvisited
+    queue<int> q;
+
+    dist[start] = 0;
+    q.push(start);
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+
+        for (int v : adj[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                q.push(v);
+            }
+        }
+    }
+
+    return dist;
+}
+
+int main() {
+    int n = 6;
+    vector<vector<int>> adj(n);
+
+    // Example graph
+    adj[0] = {1, 2};
+    adj[1] = {0, 3, 4};
+    adj[2] = {0, 4};
+    adj[3] = {1, 5};
+    adj[4] = {1, 2, 5};
+    adj[5] = {3, 4};
+
+    int start = 0;
+    vector<int> dist = bfs(n, adj, start);
+
+    cout << "Shortest distance from node " << start << ":\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Node " << i << " -> " << dist[i] << "\n";
+    }
+
+
+    return 0;
+}
+
+// JavaScript code for BFS algorithm
+function bfs(n, adj, start) {
+    const dist = Array(n).fill(-1);
+    const queue = [];
+
+    dist[start] = 0;
+    queue.push(start);
+
+    while (queue.length > 0) {
+        const u = queue.shift();
+
+        for (const v of adj[u]) {
+            if (dist[v] === -1) {
+                dist[v] = dist[u] + 1;
+                queue.push(v);
+            }
+        }
+    }
+
+    return dist;
+}
+
+// Example graph
+const n = 6;
+const adj = [
+    [1, 2],
+    [0, 3, 4],
+    [0, 4],
+    [1, 5],
+    [1, 2, 5],
+    [3, 4]
+];
+
+const start = 0;
+const dist = bfs(n, adj, start);
+
+console.log(`Shortest distance from node ${start}:`);
+for (let i = 0; i < n; i++) {
+    console.log(`Node ${i} -> ${dist[i]}`);
+}

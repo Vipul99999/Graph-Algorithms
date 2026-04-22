@@ -1,0 +1,153 @@
+// C++ code 
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+using namespace std;
+
+vector<int> dijkstra(int n, vector<vector<pair<int, int>>>& adj, int start) {
+    vector<int> dist(n, INT_MAX);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+    dist[start] = 0;
+    pq.push({0, start}); // {distance, node}
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        if (d > dist[u]) continue;
+
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+
+    return dist;
+}
+
+int main() {
+    int n = 5;
+    vector<vector<pair<int, int>>> adj(n);
+
+    // Example graph: {neighbor, weight}
+    adj[0].push_back({1, 4});
+    adj[0].push_back({2, 1});
+    adj[2].push_back({1, 2});
+    adj[1].push_back({3, 1});
+    adj[2].push_back({3, 5});
+    adj[3].push_back({4, 3});
+
+    int start = 0;
+    vector<int> dist = dijkstra(n, adj, start);
+
+    cout << "Shortest distance from node " << start << ":\n";
+    for (int i = 0; i < n; i++) {
+        if (dist[i] == INT_MAX)
+            cout << "Node " << i << " -> INF\n";
+        else
+            cout << "Node " << i << " -> " << dist[i] << "\n";
+    }
+
+    return 0;
+}
+
+// JavaScript code 
+class MinHeap {
+    constructor() {
+        this.heap = [];
+    }
+
+    push(item) {
+        this.heap.push(item);
+        this.bubbleUp();
+    }
+
+    bubbleUp() {
+        let index = this.heap.length - 1;
+        while (index > 0) {
+            let parent = Math.floor((index - 1) / 2);
+            if (this.heap[parent][0] <= this.heap[index][0]) break;
+            [this.heap[parent], this.heap[index]] = [this.heap[index], this.heap[parent]];
+            index = parent;
+        }
+    }
+
+    pop() {
+        if (this.heap.length === 1) return this.heap.pop();
+        const top = this.heap[0];
+        this.heap[0] = this.heap.pop();
+        this.bubbleDown();
+        return top;
+    }
+
+    bubbleDown() {
+        let index = 0;
+        const length = this.heap.length;
+
+        while (true) {
+            let left = 2 * index + 1;
+            let right = 2 * index + 2;
+            let smallest = index;
+
+            if (left < length && this.heap[left][0] < this.heap[smallest][0]) {
+                smallest = left;
+            }
+            if (right < length && this.heap[right][0] < this.heap[smallest][0]) {
+                smallest = right;
+            }
+            if (smallest === index) break;
+
+            [this.heap[index], this.heap[smallest]] = [this.heap[smallest], this.heap[index]];
+            index = smallest;
+        }
+    }
+
+    isEmpty() {
+        return this.heap.length === 0;
+    }
+}
+
+function dijkstra(n, adj, start) {
+    const dist = Array(n).fill(Infinity);
+    const pq = new MinHeap();
+
+    dist[start] = 0;
+    pq.push([0, start]); // [distance, node]
+
+    while (!pq.isEmpty()) {
+        const [d, u] = pq.pop();
+
+        if (d > dist[u]) continue;
+
+        for (const [v, w] of adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push([dist[v], v]);
+            }
+        }
+    }
+
+    return dist;
+}
+
+// Example graph
+const n = 5;
+const adj = [
+    [[1, 4], [2, 1]],
+    [[3, 1]],
+    [[1, 2], [3, 5]],
+    [[4, 3]],
+    []
+];
+
+const start = 0;
+const dist = dijkstra(n, adj, start);
+
+console.log(`Shortest distance from node ${start}:`);
+for (let i = 0; i < n; i++) {
+    console.log(`Node ${i} -> ${dist[i] === Infinity ? "INF" : dist[i]}`);
+}
